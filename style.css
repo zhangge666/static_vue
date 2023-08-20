@@ -1,0 +1,15 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 10px;
+    overflow: hidden;
+    background-color: #F3F3F3;
+}
+.el-sub-menu__title:hover{
+    background-color: initial !important;
+}
+.body_card_part1{
+    display: flex;
+}

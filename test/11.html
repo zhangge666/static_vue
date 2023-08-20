@@ -1,0 +1,38 @@
+<div class="left">
+    <div class="top">Top</div>
+    <div class="middle">Middle</div>
+    <div class="bottom">Bottom</div>
+</div>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: lightgray;
+}
+
+.left {
+    max-width: 65vw;
+    flex: 65%;
+    display: grid;
+    grid-template-rows: 40fr 26px 200fr 26px 240fr; /* 使用 fr 单位设置比例和间隔 */
+    height: 95vh;
+    background-color: lightblue;
+}
+
+.top {
+    background-color: lightyellow;
+}
+
+.middle {
+    background-color: lightgreen;
+}
+
+.bottom {
+    background-color: lightblue;
+}
+</style>
