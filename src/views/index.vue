@@ -28,11 +28,11 @@
                             <el-card class="box-card">
                                 <div class="left-content">
                                     <el-text class="mx-2" type="info">今日学习时间</el-text>
-                                    <el-text class="mx-2" size="large">{{ learn_time }}</el-text>
+                                    <el-text class="mx-2" size="large">{{ learn_time }}min</el-text>
                                     <el-text class="mx-2" type="info">相较于昨天</el-text>
                                 </div>
                                 <div class="right-content">
-                                    <el-progress type="circle" :percentage="25" stroke-width="8" />
+                                    <el-progress :color="pressColor" type="circle" :percentage="pressPercentage" stroke-width="8" />
                                 </div>
                             </el-card>
                             <el-card class="box-card">
@@ -51,7 +51,6 @@
                                 <div class="left-content">
                                     <el-text class="mx-2" type="info">单词总量</el-text>
                                     <el-text class="mx-2" size="large">{{ learn_time }}</el-text>
-
                                 </div>
                                 <div class="right-content">
                                     <el-progress type="circle" color='#F35848' :percentage="25" stroke-width="8" />
@@ -108,14 +107,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref,onMounted,computed } from 'vue'
 import Test from './test.vue'
 import English from './English_card.vue'
+import axios from 'axios';
 const new_date = ref(new Date())
 const learn_time = ref(0);
+const learn_time_pass = ref(0);
+const press = ref(0);
 const card1 = ref(null);
 const card2 = ref(null);
 const card3 = ref(null);
+
 
 const timer = ref(true);
 
@@ -131,6 +134,32 @@ function anima_controller() {
         }, 500)
     }
 }
+
+function pressColor(){
+    if(learn_time/learn_time_pass < 1){
+        return ""
+    }else if(learn_time/learn_time_pass > 1 || learn_time > 120){
+        return "#13CE66"
+    }else{
+        return "#F35848"
+    }
+}
+
+
+
+
+onMounted(()=>{
+    const user_id = localStorage.getItem("user_id")
+    axios.get(`http://127.0.0.1:5000/get_study_time_lite?user_id=${user_id}`).then((res)=>{
+        learn_time.value = res.data.today_study_time[0];
+        learn_time_pass.value = res.data.yesterday_study_time[0];
+    })
+})
+
+const pressPercentage = computed(()=>{
+    const number = Math.floor((learn_time.value/learn_time_pass.value)*100);
+    return number;
+})
 
 function animateAndHide() {
     const stackedCards = document.querySelectorAll('.stacked-card');
