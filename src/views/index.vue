@@ -136,10 +136,10 @@ function anima_controller() {
 }
 
 function pressColor(){
-    if(learn_time/learn_time_pass < 1){
-        return ""
-    }else if(learn_time/learn_time_pass > 1 || learn_time > 120){
-        return "#13CE66"
+    if(((learn_time.value/learn_time_pass.value) < 1) && learn_time.value > 25){
+        return "#409EFF"
+    }else if(learn_time.value/learn_time_pass.value > 1 || learn_time.value > 120){
+        return "#67C23A"
     }else{
         return "#F35848"
     }
@@ -150,7 +150,7 @@ function pressColor(){
 
 onMounted(()=>{
     const user_id = localStorage.getItem("user_id")
-    axios.get(`http://127.0.0.1:5000/get_study_time_lite?user_id=${user_id}`).then((res)=>{
+    axios.get(`http://8.130.35.235:5000/get_study_time_lite?user_id=${user_id}`).then((res)=>{
         learn_time.value = res.data.today_study_time[0];
         learn_time_pass.value = res.data.yesterday_study_time[0];
     })

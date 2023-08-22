@@ -21,7 +21,7 @@ import axios from 'axios';
 import {onMounted} from 'vue'
 const colorMode = useColorMode({});
 
-const start_Time = new Date().getTime();
+
 const isDark = useDark({
   selector: 'body',
   attribute: 'color-scheme',
@@ -30,6 +30,7 @@ const isDark = useDark({
 })
 
 onMounted(()=>{
+  const start_Time = new Date().getTime();
   window.addEventListener("beforeunload", (event) => {
     const curren_time = new Date().getTime();
     const time = (curren_time - start_Time);

@@ -30,7 +30,7 @@ onMounted(() => {
   var myChart = echarts.init(document.getElementById('main'));
   myChart.showLoading();
   myChart.setOption(isDarkMode.value ? darkOption : lightOption);
-  axios.get(`http://127.0.0.1:5000/get_study_data?user_id=${user_id}`).then((res) => {
+  axios.get(`http://8.130.35.235:5000/get_study_data?user_id=${user_id}`).then((res) => {
     myChart.hideLoading();
     console.log(res.data);
     const processedData = res.data.map(item => ({
