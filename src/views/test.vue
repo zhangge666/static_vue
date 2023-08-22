@@ -32,7 +32,6 @@ onMounted(() => {
   myChart.setOption(isDarkMode.value ? darkOption : lightOption);
   axios.get(`http://8.130.35.235:5000/get_study_data?user_id=${user_id}`).then((res) => {
     myChart.hideLoading();
-    console.log(res.data);
     const processedData = res.data.map(item => ({
       data_time: item.session_date, 
       data_date: item.study_time 

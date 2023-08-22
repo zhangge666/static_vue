@@ -1,0 +1,12 @@
+{
+  "posts": [
+    {
+      "id": "2023-08-22",
+      "word":[
+        {"word_id":100,"word":"apple"},
+        {"word_id":20,"word":"banna"},
+        {"word_id":10,"word":"test"}
+      ]
+    }
+  ]
+}

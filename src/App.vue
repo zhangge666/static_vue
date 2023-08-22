@@ -35,17 +35,9 @@ onMounted(()=>{
     const curren_time = new Date().getTime();
     const time = (curren_time - start_Time);
     const user_id = localStorage.getItem("user_id");
-    axios.get(`http://127.0.0.1:5000/get_study_data?user_id=${user_id}&time=${time}`)
+    axios.get(`http://8.130.35.235:5000/update_study_time?user_id=${user_id}&time=${time}`)
 });
 })
-
-function upDateSturyTime(){
-  console.log("ceshi");
-  const curren_time = new Date().getTime();
-  const timeOnPage = (curren_time - start_Time);
-  axios.get(`http://127.0.0.1:5000/get_study_data?user_id=100`)
-}
-
 
 </script>
 

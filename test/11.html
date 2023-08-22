@@ -1,38 +1,55 @@
-<div class="left">
-    <div class="top">Top</div>
-    <div class="middle">Middle</div>
-    <div class="bottom">Bottom</div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <h1>WebSocket Client</h1>
 
-<style>
-body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: lightgray;
-}
+    <div id="chat">
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Type a message">
+        <button onclick="sendMessage()">Send</button>
+    </div>
 
-.left {
-    max-width: 65vw;
-    flex: 65%;
-    display: grid;
-    grid-template-rows: 40fr 26px 200fr 26px 240fr; /* 使用 fr 单位设置比例和间隔 */
-    height: 95vh;
-    background-color: lightblue;
-}
+    <script>
+        // 创建 WebSocket 连接
+        const socket = new WebSocket('ws://localhost:8765'); // 服务器的地址和端口
 
-.top {
-    background-color: lightyellow;
-}
+        // 处理连接成功事件
+        socket.addEventListener('open', (event) => {
+            console.log('WebSocket 连接已建立');
+        });
 
-.middle {
-    background-color: lightgreen;
-}
+        // 处理接收到消息事件
+        socket.addEventListener('message', (event) => {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `<p>${event.data}</p>`;
+        });
 
-.bottom {
-    background-color: lightblue;
-}
-</style>
+        // 处理连接关闭事件
+        socket.addEventListener('close', (event) => {
+            if (event.wasClean) {
+                console.log(`连接已关闭，状态码: ${event.code}, 原因: ${event.reason}`);
+            } else {
+                console.error('连接意外断开');
+            }
+        });
+
+        // 处理连接错误事件
+        socket.addEventListener('error', (error) => {
+            console.error('WebSocket 错误:', error);
+        });
+
+        // 发送消息到服务器
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value;
+            socket.send(message);
+            messageInput.value = ''; // 清空输入框
+        }
+    </script>
+</body>
+</html>

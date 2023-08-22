@@ -10,9 +10,60 @@
                     <div class="people">
                         <p>people</p>
                         <div class="stacked-container">
-                            <div class="stacked-card"></div>
-                            <div class="stacked-card"></div>
-                            <div class="stacked-card"></div>
+                            <div class="stacked-card">
+                                <div id="innerContent" style="width: 100%;height: 100%;">
+                                    <div class="avatar-container">
+                                        <el-avatar style="width: 50%;height: auto;"
+                                            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                                        <el-text style="margin-top: 10px;">{{ user_name }}</el-text>
+                                    </div>
+                                    <div class="buttonGroup"
+                                        style="margin-top: 10%; display: flex; justify-content: space-between;width: 60%;margin: auto;">
+                                        <el-icon style="margin-right: 5%;">
+                                            <Clock />
+                                        </el-icon>
+                                        <el-icon style="margin-left: 5%;">
+                                            <ChatLineSquare />
+                                        </el-icon>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stacked-card">
+                                <div id="innerContent" style="width: 100%;height: 100%;">
+                                    <div class="avatar-container">
+                                        <el-avatar style="width: 50%;height: auto;"
+                                            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                                        <el-text style="margin-top: 10px;">{{ user_name }}</el-text>
+                                    </div>
+                                    <div class="buttonGroup"
+                                        style="margin-top: 10%; display: flex; justify-content: space-between;width: 60%;margin: auto;">
+                                        <el-icon style="margin-right: 5%;">
+                                            <Clock />
+                                        </el-icon>
+                                        <el-icon style="margin-left: 5%;">
+                                            <ChatLineSquare />
+                                        </el-icon>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stacked-card">
+                                <div id="innerContent" style="width: 100%;height: 100%;">
+                                    <div class="avatar-container">
+                                        <el-avatar style="width: 50%;height: auto;"
+                                            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                                        <el-text style="margin-top: 10px;">{{ user_name }}</el-text>
+                                    </div>
+                                    <div class="buttonGroup"
+                                        style="margin-top: 10%; display: flex; justify-content: space-between;width: 60%;margin: auto;">
+                                        <el-icon style="margin-right: 5%;">
+                                            <Clock />
+                                        </el-icon>
+                                        <el-icon style="margin-left: 5%;">
+                                            <ChatLineSquare />
+                                        </el-icon>
+                                    </div>
+                                </div>
+                            </div>
                             <el-button class="first_button" @click="anima_controller" link typr="info">
                                 <svg t="1692324062423" class="icon" viewBox="0 0 1024 1024" version="1.1"
                                     xmlns="http://www.w3.org/2000/svg" p-id="3988" width="15px" height="15px">
@@ -32,17 +83,19 @@
                                     <el-text class="mx-2" type="info">相较于昨天</el-text>
                                 </div>
                                 <div class="right-content">
-                                    <el-progress :color="pressColor" type="circle" :percentage="pressPercentage" stroke-width="8" />
+                                    <el-progress :color="pressColor" type="circle" :percentage="pressPercentage"
+                                        stroke-width="8" />
                                 </div>
                             </el-card>
                             <el-card class="box-card">
                                 <div class="left-content">
                                     <el-text class="mx-2" type="info">今日单词累计数</el-text>
-                                    <el-text class="mx-2" size="large">{{ learn_time }}</el-text>
-                                    <el-text class="mx-2" type="info">相较于昨天</el-text>
+                                    <el-text class="mx-2" size="large">{{ word_length }}</el-text>
+                                    <el-text class="mx-2" type="info">建议每日学习55个</el-text>
                                 </div>
                                 <div class="right-content">
-                                    <el-progress type="circle" color='#6837F4' :percentage="25" stroke-width="8" />
+                                    <el-progress type="circle" color='#6837F4' :percentage="_word_length"
+                                        stroke-width="8" />
                                 </div>
                             </el-card>
                         </div>
@@ -75,12 +128,12 @@
                     <el-card class="box-card_english">
                         <template #default>
                             <div class="english_learn">
-                               <English />
+                                <English />
                             </div>
                         </template>
                     </el-card>
                 </div>
-            
+
                 <!--   <div id="main"> -->
                 <el-card id="main">
                     <template #default>
@@ -107,17 +160,21 @@
 </template>
 
 <script setup>
-import { ref,onMounted,computed } from 'vue'
+import { format } from 'date-fns';
+import { ref, onMounted, computed } from 'vue'
 import Test from './test.vue'
 import English from './English_card.vue'
 import axios from 'axios';
 const new_date = ref(new Date())
 const learn_time = ref(0);
 const learn_time_pass = ref(0);
-const press = ref(0);
-const card1 = ref(null);
-const card2 = ref(null);
-const card3 = ref(null);
+const word_length = ref(0);
+const _word_length = ref(0);
+
+const user_name = ref("Loading...");
+
+
+
 
 
 const timer = ref(true);
@@ -126,7 +183,6 @@ const currentCardIndex = ref(0);
 
 function anima_controller() {
     if (timer.value) {
-        console.log(timer.value);
         timer.value = false;
         animateAndHide();
         setTimeout(() => {
@@ -135,12 +191,12 @@ function anima_controller() {
     }
 }
 
-function pressColor(){
-    if(((learn_time.value/learn_time_pass.value) < 1) && learn_time.value > 25){
+function pressColor() {
+    if (((learn_time.value / learn_time_pass.value) < 1) && learn_time.value > 25) {
         return "#409EFF"
-    }else if(learn_time.value/learn_time_pass.value > 1 || learn_time.value > 120){
+    } else if (learn_time.value / learn_time_pass.value >= 1 || learn_time.value > 120) {
         return "#67C23A"
-    }else{
+    } else {
         return "#F35848"
     }
 }
@@ -148,16 +204,26 @@ function pressColor(){
 
 
 
-onMounted(()=>{
+onMounted(() => {
     const user_id = localStorage.getItem("user_id")
-    axios.get(`http://8.130.35.235:5000/get_study_time_lite?user_id=${user_id}`).then((res)=>{
+    axios.get(`http://8.130.35.235:5000/get_study_time_lite?user_id=${user_id}`).then((res) => {
         learn_time.value = res.data.today_study_time[0];
         learn_time_pass.value = res.data.yesterday_study_time[0];
     })
+    const todayDate = new Date();
+    const _todayDate = format(todayDate, 'yyyy-MM-dd')
+    axios.get(`http://localhost:3000/posts/${_todayDate}`).then((res) => {
+        word_length.value = res.data.word.length
+    })
 })
 
-const pressPercentage = computed(()=>{
-    const number = Math.floor((learn_time.value/learn_time_pass.value)*100);
+computed(() => {
+    _word_length.value = ref(Math.floor((word_length.value / 55) * 100));
+})
+
+
+const pressPercentage = computed(() => {
+    const number = Math.floor((learn_time.value / learn_time_pass.value) * 100);
     return number;
 })
 
@@ -167,20 +233,26 @@ function animateAndHide() {
     const secondCard = stackedCards[(currentCardIndex.value + 1) % 3];
     const thirdCard = stackedCards[(currentCardIndex.value + 2) % 3];
 
+    const _stackedCards = document.querySelectorAll('.stacked-card #innerContent');
+    const _topCard = _stackedCards[currentCardIndex.value];
+    const _secondCard = _stackedCards[(currentCardIndex.value + 1) % 3];
+    const _thirdCard = _stackedCards[(currentCardIndex.value + 2) % 3];
+
+    
     // 隐藏当前卡片
     topCard.style.transform = 'translateX(-50%) translateX(-200px)';
+    topCard.style.opacity = '0';
 
-
+    //隐藏内容
+    _topCard.classList.add("hidden");
+    _secondCard.classList.remove("hidden");
     // 显示下一个卡片
     setTimeout(() => {
         secondCard.style.transform = 'translateY(0) scale(1) translateX(-50%)';
         secondCard.style.backgroundColor = '#4D90F9';
         secondCard.style.zIndex = "3";
     }, 500);
-    setTimeout(() => {
-        topCard.style.zIndex = '1'
-        topCard.style.opacity = '0';
-    },400)
+
 
     setTimeout(() => {
         thirdCard.style.transform = 'translateY(20px) scale(0.9) translateX(-50%)';
@@ -192,8 +264,13 @@ function animateAndHide() {
     setTimeout(() => {
         topCard.style.transform = 'translateY(40px) scale(0.8) translateX(-50%)';
         topCard.style.backgroundColor = "#B6D1FC";
-        topCard.style.opacity = '1';
+        
     }, 500);
+
+    setTimeout(() => {
+        topCard.style.zIndex = '1'
+        topCard.style.opacity = '1';
+    }, 700)
 
     // 更新当前卡片索引
     currentCardIndex.value = (currentCardIndex.value + 1) % 3;
@@ -202,6 +279,19 @@ function animateAndHide() {
 
 </script>
 <style scoped>
+.hidden {
+    display: none;
+}
+
+.avatar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 70%;
+}
+
 .container {
     display: flex;
     width: 100%;
@@ -266,7 +356,8 @@ function animateAndHide() {
     margin: auto;
     text-align: center;
 }
-:deep() .el-calendar{
+
+:deep() .el-calendar {
     --el-calendar-border: 0;
     --el-calendar-cell-width: auto;
 }
@@ -364,7 +455,12 @@ function animateAndHide() {
 }
 
 .stacked-card {
+    display: flex;
+    justify-content: center;
+    /* 水平居中 */
+    align-items: center;
     position: absolute;
+    flex-direction: column;
     left: 50%;
     /* 居中 */
 
