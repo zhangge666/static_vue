@@ -13,8 +13,7 @@
                             <div class="stacked-card">
                                 <div id="innerContent" style="width: 100%;height: 100%;">
                                     <div class="avatar-container">
-                                        <el-avatar style="width: 50%;height: auto;"
-                                            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                                        <el-avatar style="width: 50%;height: auto;" src="https://www.loliapi.com/acg/pp/" />
                                         <el-text style="margin-top: 10px;">{{ user_name }}</el-text>
                                     </div>
                                     <div class="buttonGroup"
@@ -31,8 +30,7 @@
                             <div class="stacked-card">
                                 <div id="innerContent" style="width: 100%;height: 100%;">
                                     <div class="avatar-container">
-                                        <el-avatar style="width: 50%;height: auto;"
-                                            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                                        <el-avatar style="width: 50%;height: auto;" src="https://www.loliapi.com/acg/pp/" />
                                         <el-text style="margin-top: 10px;">{{ user_name }}</el-text>
                                     </div>
                                     <div class="buttonGroup"
@@ -49,8 +47,7 @@
                             <div class="stacked-card">
                                 <div id="innerContent" style="width: 100%;height: 100%;">
                                     <div class="avatar-container">
-                                        <el-avatar style="width: 50%;height: auto;"
-                                            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                                        <el-avatar style="width: 50%;height: auto;" src="https://www.loliapi.com/acg/pp/" />
                                         <el-text style="margin-top: 10px;">{{ user_name }}</el-text>
                                     </div>
                                     <div class="buttonGroup"
@@ -94,8 +91,7 @@
                                     <el-text class="mx-2" type="info">建议每日学习55个</el-text>
                                 </div>
                                 <div class="right-content">
-                                    <el-progress type="circle" color='#6837F4' :percentage="_word_length"
-                                        stroke-width="8" />
+                                    <el-progress type="circle" color='#6837F4' :percentage="word_press" stroke-width="8" />
                                 </div>
                             </el-card>
                         </div>
@@ -138,7 +134,7 @@
                 <el-card id="main">
                     <template #default>
                         <div>
-                            <Test />
+                            <Echarts />
                         </div>
                     </template>
                 </el-card>
@@ -160,22 +156,18 @@
 </template>
 
 <script setup>
+import { socket, sendMessage, getWsMessage,CloseSocket } from '../../../until/websocketserver'
 import { format } from 'date-fns';
 import { ref, onMounted, computed } from 'vue'
-import Test from './test.vue'
+import Echarts from './echarts.vue'
 import English from './English_card.vue'
 import axios from 'axios';
 const new_date = ref(new Date())
 const learn_time = ref(0);
 const learn_time_pass = ref(0);
 const word_length = ref(0);
-const _word_length = ref(0);
 
 const user_name = ref("Loading...");
-
-
-
-
 
 const timer = ref(true);
 
@@ -202,9 +194,10 @@ function pressColor() {
 }
 
 
-
-
 onMounted(() => {
+    window.addEventListener("beforeunload", (event) => {
+        CloseSocket();
+    });
     const user_id = localStorage.getItem("user_id")
     axios.get(`http://8.130.35.235:5000/get_study_time_lite?user_id=${user_id}`).then((res) => {
         learn_time.value = res.data.today_study_time[0];
@@ -217,14 +210,14 @@ onMounted(() => {
     })
 })
 
-computed(() => {
-    _word_length.value = ref(Math.floor((word_length.value / 55) * 100));
+const word_press = computed(() => {
+    return Math.floor((word_length.value / 55) * 100);
 })
 
 
+
 const pressPercentage = computed(() => {
-    const number = Math.floor((learn_time.value / learn_time_pass.value) * 100);
-    return number;
+    return Math.floor((learn_time.value / learn_time_pass.value) * 100);
 })
 
 function animateAndHide() {
@@ -238,7 +231,7 @@ function animateAndHide() {
     const _secondCard = _stackedCards[(currentCardIndex.value + 1) % 3];
     const _thirdCard = _stackedCards[(currentCardIndex.value + 2) % 3];
 
-    
+
     // 隐藏当前卡片
     topCard.style.transform = 'translateX(-50%) translateX(-200px)';
     topCard.style.opacity = '0';
@@ -264,7 +257,7 @@ function animateAndHide() {
     setTimeout(() => {
         topCard.style.transform = 'translateY(40px) scale(0.8) translateX(-50%)';
         topCard.style.backgroundColor = "#B6D1FC";
-        
+
     }, 500);
 
     setTimeout(() => {
