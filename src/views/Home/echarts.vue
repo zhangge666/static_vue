@@ -23,9 +23,6 @@ const updateChartOptions = (darkMode) => {
 };
 
 onMounted(() => {
-  localStorage.setItem('user_id', '2');
-
-  
 /*   const currentDate = new Date().toISOString().substr(0, 10); */
   var myChart = echarts.init(document.getElementById('main'));
   myChart.showLoading();

@@ -87,7 +87,7 @@
                             <el-card class="box-card">
                                 <div class="left-content">
                                     <el-text class="mx-2" type="info">今日单词累计数</el-text>
-                                    <el-text class="mx-2" size="large">{{ word_length }}</el-text>
+                                    <el-text class="mx-2" size="large">{{ word_account }}</el-text>
                                     <el-text class="mx-2" type="info">建议每日学习55个</el-text>
                                 </div>
                                 <div class="right-content">
@@ -99,10 +99,10 @@
                             <el-card class="box-card">
                                 <div class="left-content">
                                     <el-text class="mx-2" type="info">单词总量</el-text>
-                                    <el-text class="mx-2" size="large">{{ learn_time }}</el-text>
+                                    <el-text class="mx-2" size="large">{{ word_length }}</el-text>
                                 </div>
                                 <div class="right-content">
-                                    <el-progress type="circle" color='#F35848' :percentage="25" stroke-width="8" />
+                                    <el-progress type="circle" :color='word_lengthPressColor' :percentage="25" stroke-width="8" />
                                 </div>
                             </el-card>
                             <el-card class="box-card">
@@ -124,7 +124,7 @@
                     <el-card class="box-card_english">
                         <template #default>
                             <div class="english_learn">
-                                <English />
+                                <English @upDate="upDate"/>
                             </div>
                         </template>
                     </el-card>
@@ -162,16 +162,22 @@ import { ref, onMounted, computed } from 'vue'
 import Echarts from './echarts.vue'
 import English from './English_card.vue'
 import axios from 'axios';
+import { el } from 'date-fns/locale';
 const new_date = ref(new Date())
 const learn_time = ref(0);
 const learn_time_pass = ref(0);
+const word_account = ref(0);
 const word_length = ref(0);
-
 const user_name = ref("Loading...");
 
 const timer = ref(true);
 
 const currentCardIndex = ref(0);
+
+function upDate(date){
+    word_account.value = date;
+    word_length.value = word_length+1;
+}
 
 function anima_controller() {
     if (timer.value) {
@@ -193,11 +199,24 @@ function pressColor() {
     }
 }
 
+function word_lengthPressColor(){
+    if((Math.floor(word_length.value/517)*100)<33){
+        return "#F35848";
+    }else if(33<(Math.floor(word_length.value/517)*100)<66){
+        return "#409EFF";
+    }else{
+        return "#409EFF";
+    }
+}
+
 
 onMounted(() => {
     window.addEventListener("beforeunload", (event) => {
         CloseSocket();
     });
+    axios.get(`http://localhost:3000/number`).then((res) => {
+        word_length.value = res.data.length;
+    })
     const user_id = localStorage.getItem("user_id")
     axios.get(`http://8.130.35.235:5000/get_study_time_lite?user_id=${user_id}`).then((res) => {
         learn_time.value = res.data.today_study_time[0];
@@ -206,17 +225,28 @@ onMounted(() => {
     const todayDate = new Date();
     const _todayDate = format(todayDate, 'yyyy-MM-dd')
     axios.get(`http://localhost:3000/posts/${_todayDate}`).then((res) => {
-        word_length.value = res.data.word.length
+        word_account.value = res.data.words.length
+    }).catch(()=>{
+        axios.post(`http://localhost:3000/posts`,{
+            "id":_todayDate,
+            "words":[]
+        }).then((res)=>{
+            word_account.value = res.data.words.length
+        })
     })
 })
 
 const word_press = computed(() => {
-    return Math.floor((word_length.value / 55) * 100);
+    return Math.floor((word_account.value / 55) * 100);
 })
 
 
 
 const pressPercentage = computed(() => {
+    if(learn_time_pass.value == 0){
+        console.log("进入");
+        return Math.floor((learn_time.value/120)*100);
+    }
     return Math.floor((learn_time.value / learn_time_pass.value) * 100);
 })
 
