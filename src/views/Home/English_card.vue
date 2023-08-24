@@ -5,7 +5,6 @@
         <p>{{ symbol }}</p>
         <p>{{ sentence }}</p>
         <p>{{ sentence_tra }}</p>
-
         <el-button @click="get_next" type="success" round>下一个</el-button>
         <el-button @click="listen" type="primary" round>试听</el-button>
     </div>

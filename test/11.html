@@ -47,7 +47,7 @@
         function sendMessage() {
             const messageInput = document.getElementById('messageInput');
             const message = messageInput.value;
-            socket.send(message);
+            socket.send(JSON.parse(message));
             messageInput.value = ''; // 清空输入框
         }
     </script>

@@ -17,6 +17,7 @@
     "socket.io-client": "^4.7.2",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4",
+    "vuex": "^4.1.0",
     "websocket": "^1.0.32"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 // websocket.js
-
+import store from '../src/store/index';
 let socket = null; // WebSocket对象
 const heartbeatMessage = 'ping'; // 心跳包消息内容
 const reconnectInterval = 3000; // 重连间隔（毫秒）
@@ -23,15 +23,19 @@ function connectWebSocket() {
     socket.addEventListener('open', () => {
         console.log('WebSocket 连接已建立');
         isConnecting = false; // 连接成功后重置标志位
+        const id = localStorage.getItem('user_id');
+        const user_name = localStorage.getItem('user_name');
         const userInfo = {
-            id: 1,
-            user_name: "TestUser",
+            id:id,
+            user_name:user_name,
         };
         socket.send(JSON.stringify(userInfo));
     });
 
     socket.addEventListener('message', (event) => {
-        // 处理接收到的消息，可以根据需要进行处理
+        const message = event.data;
+        console.log("更新ing");
+        store.commit('addMessage', JSON.parse(message)); 
     });
 
     socket.addEventListener('close', (event) => {
@@ -65,6 +69,7 @@ function sendMessage(message) {
         console.error('WebSocket is not in OPEN state. Cannot send message.');
     }
 }
+
 function getWsMessage() {
     return new Promise((resolve) => {
         socket.addEventListener('message', (event) => {

@@ -2,7 +2,7 @@
     <div class="container">
         <div class="left">
             <div class="body_haeder">
-                <el-text class="mx-1" size="large">Hello Xiaozhang</el-text>
+                <el-text class="mx-1" size="large">Hello {{locale_userName}}</el-text>
                 <el-text class="mx-1" type="info" size="small">Welcome</el-text>
             </div>
             <div body_first_limit>
@@ -156,9 +156,10 @@
 </template>
 
 <script setup>
+import { useStore } from 'vuex';
 import { socket, sendMessage, getWsMessage,CloseSocket } from '../../../until/websocketserver'
 import { format } from 'date-fns';
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed,watch } from 'vue'
 import Echarts from './echarts.vue'
 import English from './English_card.vue'
 import axios from 'axios';
@@ -169,14 +170,24 @@ const learn_time_pass = ref(0);
 const word_account = ref(0);
 const word_length = ref(0);
 const user_name = ref("Loading...");
-
+const state_i = ref(0);
+const locale_userName = localStorage.getItem('user_name');
 const timer = ref(true);
 
 const currentCardIndex = ref(0);
+const store = useStore();
+const user_list = computed(() => {
+    return store.state.messages
+});
+
+watch(user_list,(newVal)=>{
+    console.log(newVal);
+    user_name.value = user_list.value[state_i.value].user_name
+})
 
 function upDate(date){
     word_account.value = date;
-    word_length.value = word_length+1;
+    word_length.value = word_length.value+1;
 }
 
 function anima_controller() {
@@ -213,7 +224,7 @@ function word_lengthPressColor(){
 onMounted(() => {
     window.addEventListener("beforeunload", (event) => {
         CloseSocket();
-    });
+    }); 
     axios.get(`http://localhost:3000/number`).then((res) => {
         word_length.value = res.data.length;
     })
@@ -244,7 +255,6 @@ const word_press = computed(() => {
 
 const pressPercentage = computed(() => {
     if(learn_time_pass.value == 0){
-        console.log("进入");
         return Math.floor((learn_time.value/120)*100);
     }
     return Math.floor((learn_time.value / learn_time_pass.value) * 100);
@@ -265,6 +275,9 @@ function animateAndHide() {
     // 隐藏当前卡片
     topCard.style.transform = 'translateX(-50%) translateX(-200px)';
     topCard.style.opacity = '0';
+
+    state_i.value = (state_i.value + 1)%user_list.value.length;
+    user_name.value = user_list.value[state_i.value].user_name;
 
     //隐藏内容
     _topCard.classList.add("hidden");
