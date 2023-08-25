@@ -16,20 +16,16 @@
   
   <script setup>
   import Navmenu from './navmenu.vue'
-  import {useColorMode,useDark} from '@vueuse/core'
+  import { connectWebSocket, CloseSocket } from '../../../until/websocketserver'
   import axios from 'axios';
   import {onMounted} from 'vue'
-  const colorMode = useColorMode({});
-  
-  
-  const isDark = useDark({
-    selector: 'body',
-    attribute: 'color-scheme',
-    valueDark: 'dark',
-    valueLight: 'light',
-  })
+ 
   
   onMounted(()=>{
+    connectWebSocket()
+    window.addEventListener("beforeunload", (event) => {
+        CloseSocket();
+    });
     const start_Time = new Date().getTime();
     window.addEventListener("beforeunload", (event) => {
       const curren_time = new Date().getTime();
@@ -42,6 +38,11 @@
   </script>
   
   <style scoped>
+
+.dark aside{
+    background-color: #1D1D1D;
+}
+
   .aside{
     width: 13vh;
     display: flex;

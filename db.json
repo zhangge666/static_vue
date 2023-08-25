@@ -242,11 +242,80 @@
         {
           "word_id": 1035,
           "word": "resemble"
+        },
+        {
+          "word_id": 38,
+          "word": "contemporary"
+        }
+      ]
+    },
+    {
+      "id": "2023-08-25",
+      "words": [
+        {
+          "word_id": 27,
+          "word": "smooth"
+        },
+        {
+          "word_id": 1087,
+          "word": "detect"
+        },
+        {
+          "word_id": 53,
+          "word": "import"
+        },
+        {
+          "word_id": 400,
+          "word": "instruction"
+        },
+        {
+          "word_id": 710,
+          "word": "domination"
+        },
+        {
+          "word_id": 1141,
+          "word": "contribute"
+        },
+        {
+          "word_id": 351,
+          "word": "crash"
+        },
+        {
+          "word_id": 272,
+          "word": "dictator"
+        },
+        {
+          "word_id": 125,
+          "word": "technician"
+        },
+        {
+          "word_id": 1068,
+          "word": "decorate"
+        },
+        {
+          "word_id": 414,
+          "word": "considerate"
+        },
+        {
+          "word_id": 107,
+          "word": "determine"
+        },
+        {
+          "word_id": 610,
+          "word": "puzzling"
+        },
+        {
+          "word_id": 637,
+          "word": "implication"
+        },
+        {
+          "word_id": 319,
+          "word": "fund"
         }
       ]
     }
   ],
   "number": {
-    "length": 58
+    "length": 74
   }
 }

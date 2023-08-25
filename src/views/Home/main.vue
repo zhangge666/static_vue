@@ -2,7 +2,7 @@
     <div class="container">
         <div class="left">
             <div class="body_haeder">
-                <el-text class="mx-1" size="large">Hello {{locale_userName}}</el-text>
+                <el-text class="mx-1" size="large">Hello {{ locale_userName }}</el-text>
                 <el-text class="mx-1" type="info" size="small">Welcome</el-text>
             </div>
             <div body_first_limit>
@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="right-content">
                                     <el-progress :color="pressColor" type="circle" :percentage="pressPercentage"
-                                        stroke-width="8" />
+                                        :stroke-width="8" />
                                 </div>
                             </el-card>
                             <el-card class="box-card">
@@ -91,7 +91,7 @@
                                     <el-text class="mx-2" type="info">建议每日学习55个</el-text>
                                 </div>
                                 <div class="right-content">
-                                    <el-progress type="circle" color='#6837F4' :percentage="word_press" stroke-width="8" />
+                                    <el-progress type="circle" color='#6837F4' :percentage="word_press" :stroke-width="8" />
                                 </div>
                             </el-card>
                         </div>
@@ -102,7 +102,8 @@
                                     <el-text class="mx-2" size="large">{{ word_length }}</el-text>
                                 </div>
                                 <div class="right-content">
-                                    <el-progress type="circle" :color='word_lengthPressColor' :percentage="25" stroke-width="8" />
+                                    <el-progress type="circle" :color='word_lengthPressColor' :percentage="25"
+                                        :stroke-width="8" />
                                 </div>
                             </el-card>
                             <el-card class="box-card">
@@ -112,7 +113,7 @@
                                     <el-text class="mx-2" type="info">相较于昨天</el-text>
                                 </div>
                                 <div class="right-content">
-                                    <el-progress type="circle" :percentage="25" stroke-width="8" />
+                                    <el-progress type="circle" :percentage="25" :stroke-width="8" />
                                 </div>
                             </el-card>
                         </div>
@@ -124,7 +125,7 @@
                     <el-card class="box-card_english">
                         <template #default>
                             <div class="english_learn">
-                                <English @upDate="upDate"/>
+                                <English @upDate="upDate" />
                             </div>
                         </template>
                     </el-card>
@@ -157,13 +158,22 @@
 
 <script setup>
 import { useStore } from 'vuex';
-import { socket, sendMessage, getWsMessage,CloseSocket } from '../../../until/websocketserver'
+
 import { format } from 'date-fns';
-import { ref, onMounted, computed,watch } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import Echarts from './echarts.vue'
 import English from './English_card.vue'
 import axios from 'axios';
-import { el } from 'date-fns/locale';
+import { useDark } from '@vueuse/core'
+
+const isDark = useDark({
+    selector: 'body',
+    attribute: 'color-scheme',
+    valueDark: 'dark',
+    valueLight: 'light',
+})
+const arr_color = ref(isDark.value ? ['#1D1D1D', '#262626', '#414141'] : ['#4D90F9', '#8BB6FC', '#B6D1FC']);
+
 const new_date = ref(new Date())
 const learn_time = ref(0);
 const learn_time_pass = ref(0);
@@ -180,14 +190,31 @@ const user_list = computed(() => {
     return store.state.messages
 });
 
-watch(user_list,(newVal)=>{
-    console.log(newVal);
+watch(isDark, (newVal) => {
+    arr_color.value = isDark.value ? ['#1D1D1D', '#262626', '#414141'] : ['#4D90F9', '#8BB6FC', '#B6D1FC'];
+    updateUi();
+})
+
+watch(user_list, (newVal) => {
     user_name.value = user_list.value[state_i.value].user_name
 })
 
-function upDate(date){
-    word_account.value = date;
-    word_length.value = word_length.value+1;
+function upDate(date) {
+    word_account.value = word_account.value + 1;
+    word_length.value = date;
+}
+
+function updateUi() {
+    const stackedCards = document.querySelectorAll('.stacked-card');
+    const topCard = stackedCards[currentCardIndex.value];
+    const secondCard = stackedCards[(currentCardIndex.value + 1) % 3];
+    const thirdCard = stackedCards[(currentCardIndex.value + 2) % 3];
+
+
+    topCard.style.backgroundColor = arr_color.value[0];
+    secondCard.style.backgroundColor = arr_color.value[1];
+    thirdCard.style.backgroundColor = arr_color.value[2];
+
 }
 
 function anima_controller() {
@@ -210,21 +237,19 @@ function pressColor() {
     }
 }
 
-function word_lengthPressColor(){
-    if((Math.floor(word_length.value/517)*100)<33){
+function word_lengthPressColor() {
+    if ((Math.floor(word_length.value / 517) * 100) < 33) {
         return "#F35848";
-    }else if(33<(Math.floor(word_length.value/517)*100)<66){
+    } else if (33 < (Math.floor(word_length.value / 517) * 100) < 66) {
         return "#409EFF";
-    }else{
+    } else {
         return "#409EFF";
     }
 }
 
 
 onMounted(() => {
-    window.addEventListener("beforeunload", (event) => {
-        CloseSocket();
-    }); 
+    
     axios.get(`http://localhost:3000/number`).then((res) => {
         word_length.value = res.data.length;
     })
@@ -237,11 +262,11 @@ onMounted(() => {
     const _todayDate = format(todayDate, 'yyyy-MM-dd')
     axios.get(`http://localhost:3000/posts/${_todayDate}`).then((res) => {
         word_account.value = res.data.words.length
-    }).catch(()=>{
-        axios.post(`http://localhost:3000/posts`,{
-            "id":_todayDate,
-            "words":[]
-        }).then((res)=>{
+    }).catch(() => {
+        axios.post(`http://localhost:3000/posts`, {
+            "id": _todayDate,
+            "words": []
+        }).then((res) => {
             word_account.value = res.data.words.length
         })
     })
@@ -254,8 +279,8 @@ const word_press = computed(() => {
 
 
 const pressPercentage = computed(() => {
-    if(learn_time_pass.value == 0){
-        return Math.floor((learn_time.value/120)*100);
+    if (learn_time_pass.value == 0) {
+        return Math.floor((learn_time.value / 120) * 100);
     }
     return Math.floor((learn_time.value / learn_time_pass.value) * 100);
 })
@@ -276,7 +301,7 @@ function animateAndHide() {
     topCard.style.transform = 'translateX(-50%) translateX(-200px)';
     topCard.style.opacity = '0';
 
-    state_i.value = (state_i.value + 1)%user_list.value.length;
+    state_i.value = (state_i.value + 1) % user_list.value.length;
     user_name.value = user_list.value[state_i.value].user_name;
 
     //隐藏内容
@@ -285,21 +310,21 @@ function animateAndHide() {
     // 显示下一个卡片
     setTimeout(() => {
         secondCard.style.transform = 'translateY(0) scale(1) translateX(-50%)';
-        secondCard.style.backgroundColor = '#4D90F9';
+        secondCard.style.backgroundColor = arr_color.value[0];
         secondCard.style.zIndex = "3";
     }, 500);
 
 
     setTimeout(() => {
         thirdCard.style.transform = 'translateY(20px) scale(0.9) translateX(-50%)';
-        thirdCard.style.backgroundColor = '#8BB6FC';
+        thirdCard.style.backgroundColor = arr_color.value[1];
         thirdCard.style.zIndex = "2";
 
     }, 500);
 
     setTimeout(() => {
         topCard.style.transform = 'translateY(40px) scale(0.8) translateX(-50%)';
-        topCard.style.backgroundColor = "#B6D1FC";
+        topCard.style.backgroundColor = arr_color.value[2];
 
     }, 500);
 
@@ -512,6 +537,21 @@ function animateAndHide() {
     /* 居中 */
 }
 
+.dark .stacked-card:nth-child(1) {
+    background-color: #1D1D1D;
+    /* 暗色模式下的颜色 */
+}
+
+.dark .stacked-card:nth-child(2) {
+    background-color: #262626;
+    /* 暗色模式下的颜色 */
+}
+
+.dark .stacked-card:nth-child(3) {
+    background-color: #414141;
+    /* 暗色模式下的颜色 */
+}
+
 .stacked-card:nth-child(1) {
     background-color: #4D90F9;
     /* 最上面的卡片颜色 */
@@ -579,5 +619,4 @@ function animateAndHide() {
     position: absolute;
     top: 35%;
     right: 0;
-}
-</style>
+}</style>

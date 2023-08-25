@@ -3,20 +3,22 @@
 </template>
   
 <script setup>
-import { onMounted, watch } from 'vue';
+import { ref,onMounted, watch } from 'vue';
 import { useColorMode, useDark } from '@vueuse/core'
 import * as echarts from 'echarts';
 import axios from 'axios';
 const isDarkMode = useDark({});
 const user_id = localStorage.getItem('user_id');
 
-
+const updatedOption = ref(null);
 
 watch(isDarkMode, (newVal) => {
   var myChart = echarts.init(document.getElementById('main'));
   myChart.dispose();
   var myChart = echarts.init(document.getElementById('main'));
   myChart.setOption(isDarkMode.value ? darkOption : lightOption);
+  myChart.setOption(updatedOption.value)
+
 });
 const updateChartOptions = (darkMode) => {
   myChart.setOption(darkMode ? darkOption : lightOption);
@@ -34,7 +36,7 @@ onMounted(() => {
       data_date: item.study_time 
     }));
 
-    const updatedOption = {
+    updatedOption.value = {
       xAxis: {
         data: processedData.map(item => item.data_time) // 使用处理后的时间数据更新 x 轴数据
       },
@@ -45,7 +47,7 @@ onMounted(() => {
       ]
     };
     
-    myChart.setOption(updatedOption); // 更新图表
+    myChart.setOption(updatedOption.value); // 更新图表
   });
 });
 

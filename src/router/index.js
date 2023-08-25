@@ -23,14 +23,10 @@ const router = createRouter({
       component: Index,
       children: [
         // Remove the 'name' property here
-        { path: '', component: Main }, // 默认子路由
-        { path: 'home', component: Main }
+        { path: '',name: 'index', component: Main }, // 默认子路由
+        { path: 'home', component: Main },
+        {path:'/about',name:'about',component:About}
       ]
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: About
     }
   ]
 })

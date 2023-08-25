@@ -59,7 +59,6 @@ function connectWebSocket() {
 }
 
 // 初始化时连接WebSocket
-connectWebSocket();
 
 // 封装发送消息的函数，确保WebSocket处于打开状态再发送
 function sendMessage(message) {
@@ -85,4 +84,4 @@ function CloseSocket(){
 }
 
 // 导出WebSocket对象和发送消息的函数，以便在其他文件中使用
-export { socket,sendMessage,getWsMessage,CloseSocket };
+export { socket,sendMessage,getWsMessage,CloseSocket,connectWebSocket };

@@ -6,6 +6,7 @@ body {
     padding: 10px;
     overflow: hidden;
     background-color: #F3F3F3;
+    
 }
 .el-sub-menu__title:hover{
     background-color: initial !important;
@@ -13,3 +14,16 @@ body {
 .body_card_part1{
     display: flex;
 }
+
+html.dark {
+    --el-bg-color-overlay: #1D1D1D;
+}
+html.dark {
+    background-color: #171717;
+}
+.dark body{
+    background-color: #171717;
+}
+
+
+  

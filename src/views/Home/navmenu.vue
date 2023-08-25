@@ -54,7 +54,7 @@
             <path d="M790.9376 906.5472H244.0192a41.8304 41.8304 0 0 1 0-83.6096h546.9184a41.8304 41.8304 0 0 1 0 83.6096z"
                 fill="#92DBFF" p-id="1434"></path>
         </svg> -->
-        <el-menu class="el-menu-vertical-demo" collapse="false" router>
+        <el-menu class="el-menu-vertical-demo" :collapse="true" router>
             <el-sub-menu index="1">
                 <template #title>
                     <el-icon>
@@ -64,7 +64,7 @@
                 </template>
                 <el-menu-item-group>
                     <template #title><span>Group One</span></template>
-                    <el-menu-item index="1-1">item one</el-menu-item>
+                    <el-menu-item index="/index">item one</el-menu-item>
                     <el-menu-item index="1-2">item two</el-menu-item>
                 </el-menu-item-group>
                 <el-menu-item-group title="Group Two">
@@ -95,13 +95,20 @@
 
     </div>
     <div class="nav_bottom">
-        <p>bottom</p>
+        <el-button v-if="!isDark" text @click="isDark = true">暗黑模式</el-button>
+        <el-button v-else text @click="isDark = false">亮色模式</el-button>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-
+import { useDark } from '@vueuse/core'
+const isDark = useDark({
+    selector: 'body',
+    attribute: 'color-scheme',
+    valueDark: 'dark',
+    valueLight: 'light',
+})
 
 
 </script>
@@ -111,6 +118,7 @@ import { ref } from 'vue'
     padding: 20px;
     /* 可以根据需要设置内边距 */
 }
+
 .nva_headr p {
     width: 80%;
     margin: 20px auto;
@@ -146,11 +154,13 @@ import { ref } from 'vue'
     text-align: center;
     margin: 12px 0;
 }
-.el-menu-vertical-demo{
+
+.el-menu-vertical-demo {
     background-color: initial;
     border-right: 0;
 }
-.el-menu-item:hover{
+
+.el-menu-item:hover {
     background-color: initial;
 }
 </style>
