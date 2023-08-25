@@ -302,8 +302,11 @@ function animateAndHide() {
     topCard.style.opacity = '0';
 
     state_i.value = (state_i.value + 1) % user_list.value.length;
-    user_name.value = user_list.value[state_i.value].user_name;
-
+    if(user_list.value == ""){
+        user_name.value = "获取数据失败";
+    }else{
+        user_name.value = user_list.value[state_i.value].user_name;
+    }
     //隐藏内容
     _topCard.classList.add("hidden");
     _secondCard.classList.remove("hidden");
@@ -319,7 +322,6 @@ function animateAndHide() {
         thirdCard.style.transform = 'translateY(20px) scale(0.9) translateX(-50%)';
         thirdCard.style.backgroundColor = arr_color.value[1];
         thirdCard.style.zIndex = "2";
-
     }, 500);
 
     setTimeout(() => {
@@ -361,6 +363,10 @@ function animateAndHide() {
 .left,
 .right {
     margin-right: 30px;
+}
+.dark /* 修改图标颜色为白色 */
+.icon path {
+    fill: #fff; /* 或者其他白色的颜色值，如 #ffffff */
 }
 
 .right {

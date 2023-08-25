@@ -18,7 +18,7 @@ function connectWebSocket() {
 
     isConnecting = true;
 
-    socket = new WebSocket('ws://localhost:8765'); // 连接WebSocket服务器地址
+    socket = new WebSocket('ws://8.130.35.235:8765'); // 连接WebSocket服务器地址
 
     socket.addEventListener('open', () => {
         console.log('WebSocket 连接已建立');

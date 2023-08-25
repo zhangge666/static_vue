@@ -1,9 +1,12 @@
 <template>
-  <div id="main" style="width: 100%;height:100%;text-align: center;"></div>
+  <div style="position: relative; width: 100%; height: 100%;">
+    <div id="main" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; text-align: center;">
+    </div>
+  </div>
 </template>
   
 <script setup>
-import { ref,onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useColorMode, useDark } from '@vueuse/core'
 import * as echarts from 'echarts';
 import axios from 'axios';
@@ -25,15 +28,21 @@ const updateChartOptions = (darkMode) => {
 };
 
 onMounted(() => {
-/*   const currentDate = new Date().toISOString().substr(0, 10); */
+  /*   const currentDate = new Date().toISOString().substr(0, 10); */
   var myChart = echarts.init(document.getElementById('main'));
+  // 监听窗口大小变化
+  window.addEventListener('resize', () => {
+    // 调用图表的 resize 方法
+    myChart.resize();
+  });
+
   myChart.showLoading();
   myChart.setOption(isDarkMode.value ? darkOption : lightOption);
   axios.get(`http://8.130.35.235:5000/get_study_data?user_id=${user_id}`).then((res) => {
     myChart.hideLoading();
     const processedData = res.data.map(item => ({
-      data_time: item.session_date, 
-      data_date: item.study_time 
+      data_time: item.session_date,
+      data_date: item.study_time
     }));
 
     updatedOption.value = {
@@ -46,7 +55,7 @@ onMounted(() => {
         }
       ]
     };
-    
+
     myChart.setOption(updatedOption.value); // 更新图表
   });
 });
